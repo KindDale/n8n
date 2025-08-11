@@ -1,0 +1,82 @@
+{
+  "id": "nJwkSOrJIFvutw1n",
+  "name": "A4F Chat Completion",
+  "nodes": [
+    {
+      "id": "a598d868-0461-41fc-b6aa-f9998e9d6146",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [-60, 0],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "id": "587043c4-e808-4c3f-910f-60f5eb8aff15",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "position": [180, 0],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "Prompt",
+              "type": "string",
+              "value": "Hello, tell me a fun fact."
+            }
+          ]
+        }
+      },
+      "typeVersion": 3.4
+    },
+    {
+      "id": "a4f-request-node",
+      "name": "A4F Chat API",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [420, 0],
+      "parameters": {
+        "url": "https://api.a4f.co/v1/chat/completions",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "specifyBody": "json",
+        "sendBody": true,
+        "jsonBody": "={\n  \"model\": \"gpt-4o-mini\",\n  \"messages\": [\n    {\"role\": \"user\", \"content\": \"{{ $json.Prompt }}\"}\n  ]\n}"
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "a4f-auth",
+          "name": "A4F Header Auth"
+        }
+      },
+      "typeVersion": 4.2
+    }
+  ],
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "A4F Chat API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
